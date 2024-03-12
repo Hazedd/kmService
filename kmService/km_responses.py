@@ -1,3 +1,4 @@
+import json
 import math
 from dataclasses import dataclass, field
 
@@ -10,8 +11,6 @@ from kmService.uitils.shapely_geojson import (
     dumps,
 )
 from kmService.uitils.shapely_helpers import ShapelyTransform
-
-# todo: make protocol for geojsononable objects
 
 
 @dataclass
@@ -105,17 +104,28 @@ class KmLintMeasure:
         """
         return km_string_helper(self.distance, self.hm, self.km_lint.name)
 
-    def get_geojson_features(self) -> list[GeoJsonFeature]:
+    def get_geojson_features(
+        self, add_raai: bool = True, add_geocode: bool = True
+    ) -> list[GeoJsonFeature]:
         # """
         # Gets the GeoJSON features.
         #
         # Returns:
         #     The list of GeoJSON features.
         # """
+        geocode_dict = {}
+        if add_geocode:
+            geocode_dict = {
+                "geocode_number": self.geocode.number
+                if self.geocode is not None
+                else None,
+                "sub_geocode": self.geocode.sub_code
+                if self.geocode is not None
+                else None,
+                "geocode_name": self.geocode.name if self.geocode is not None else None,
+            }
+
         features = [
-            GeoJsonFeature(
-                [ShapelyTransform.rd_to_wgs(self.raai)], {"type": "raai", "hm": self.hm}
-            ),
             # todo: make point on line and create line between input
             GeoJsonFeature(
                 [ShapelyTransform.rd_to_wgs(self.input_point)],
@@ -125,12 +135,19 @@ class KmLintMeasure:
                     "distance": self.distance,
                     "km_lint_name": self.km_lint.name,
                     "km_lint_description": self.km_lint.description,
-                    "geocode_number": self.geocode.number,
-                    "sub_geocode": self.geocode.sub_code,
-                    "geocode_name": self.geocode.name,
-                },
+                }
+                | geocode_dict,
             ),
         ]
+
+        if add_raai:
+            features.append(
+                GeoJsonFeature(
+                    [ShapelyTransform.rd_to_wgs(self.raai)],
+                    {"type": "raai", "hm": self.hm},
+                )
+            )
+
         return features
 
     def get_geojson_feature_collection(self) -> GeoJsonFeatureCollection:
@@ -150,6 +167,17 @@ class KmLintMeasure:
             The GeoJSON string.
         """
         return dumps(self.get_geojson_feature_collection(), indent=4)
+
+    def as_json_serializable(self):
+        """Converts KmLintMeasure instance to a JSON serializable dictionary."""
+        return {
+            "input_point_wkt": self.input_point.wkt,
+            "hm": self.hm,
+            "distance": self.distance,
+            "km_lint": self.km_lint.__dict__,
+            "geocode": self.geocode.__dict__ if self.geocode is not None else None,
+            "raai_geometry_wkt": self.raai.wkt if self.raai is not None else None,
+        }
 
 
 @dataclass
@@ -200,7 +228,9 @@ class KmResponse:
             km_string_helper(_.hm, _.distance, _.km_lint.name) for _ in self.km_measures
         ][0]
 
-    def get_geojson_features(self) -> list[GeoJsonFeature]:
+    def get_geojson_features(
+        self, add_raai: bool = True, add_geocode: bool = True
+    ) -> list[GeoJsonFeature]:
         # """
         # Generate a list of GeoJSON features from the kilometer measures.
         #
@@ -209,26 +239,52 @@ class KmResponse:
         # """
         geojson_features = []
         for item in self.km_measures:
-            geojson_features.extend(item.get_geojson_features())
+            geojson_features.extend(item.get_geojson_features(add_raai, add_geocode))
         return geojson_features
 
-    def get_geojson_feature_collection(self) -> GeoJsonFeatureCollection:
+    def get_geojson_feature_collection(
+        self, add_raai: bool = True, add_geocode: bool = True
+    ) -> GeoJsonFeatureCollection:
         """
         Retrieve a GeoJSON FeatureCollection object.
 
         Returns:
             A collection of GeoJSON features.
         """
-        return GeoJsonFeatureCollection(self.get_geojson_features())
+        return GeoJsonFeatureCollection(
+            self.get_geojson_features(add_raai, add_geocode)
+        )
 
-    def geojson_string(self) -> str:
+    def geojson_string(self, add_raai: bool = True, add_geocode: bool = True) -> str:
         """
-        Generate GeoJSON representation of the response.
+        Generate GeoJSON string representation of the response.
 
         Returns:
             GeoJSON string representing the kilometer measures.
         """
-        return dumps(self.get_geojson_feature_collection(), indent=4)
+        return dumps(
+            self.get_geojson_feature_collection(add_raai, add_geocode), indent=4
+        )
+
+    def geojson_dict(self, add_raai: bool = True, add_geocode: bool = True) -> dict:
+        """
+        Generate GeoJSON dict representation of the response.
+
+        Returns:
+            GeoJSON dict representing the kilometer measures.
+        """
+        return json.loads(
+            dumps(self.get_geojson_feature_collection(add_raai, add_geocode), indent=4)
+        )
+
+    def as_json_serializable(self):
+        """Converts KmResponse instance to a JSON serializable dictionary."""
+        return {
+            "input_point_wkt": self.input_point.wkt,
+            "km_measures": [
+                measure.as_json_serializable() for measure in self.km_measures
+            ],
+        }
 
 
 @dataclass
