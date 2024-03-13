@@ -171,6 +171,7 @@ class KmLintMeasure:
     def as_json_serializable(self):
         """Converts KmLintMeasure instance to a JSON serializable dictionary."""
         return {
+            "km_value": self.display,
             "input_point_wkt": self.input_point.wkt,
             "hm": self.hm,
             "distance": self.distance,
@@ -281,6 +282,7 @@ class KmResponse:
         """Converts KmResponse instance to a JSON serializable dictionary."""
         return {
             "input_point_wkt": self.input_point.wkt,
+            "km_value": self.display,
             "km_measures": [
                 measure.as_json_serializable() for measure in self.km_measures
             ],
