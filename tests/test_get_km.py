@@ -16,7 +16,7 @@ feature_service_instance_km = asyncio.run(KmService.factory())
 )
 @pytest.mark.asyncio
 async def test_km_service(feature_service_instance_km: KmService):
-    assert len(feature_service_instance_km._value_objects_dict.keys()) == 670
+    assert len(feature_service_instance_km._value_objects_dict.keys()) == 669
 
 
 @pytest.mark.parametrize(
@@ -30,9 +30,9 @@ async def test_get_km(feature_service_instance_km: KmService):
     km_response = feature_service_instance_km.get_km(248795.653, 608180.885)
 
     first_km = km_response.km_measures[0]
-    assert first_km.display == "km 1.905 (Rda-Eem)"
+    assert first_km.display == "km 5.301 (Rda-Eem)"
     geojson_string = first_km.geojson_string()
-    assert '"km_value": "km 1.905 (Rda-Eem)"' in geojson_string
+    assert '"km_value": "km 5.301 (Rda-Eem)"' in geojson_string
 
 
 @pytest.mark.parametrize(
@@ -58,7 +58,7 @@ async def test_km_batch(feature_service_instance_km: KmService):
     assert first_in_response.km_measures[0].hm == 5.3
     assert round(first_in_response.km_measures[0].distance, 3) == 1.947
     assert first_in_response.km_measures[0].km_lint.name == "Rda-Eem"
-    assert first_in_response.km_measures[0].display == "km 1.905 (Rda-Eem)"
+    assert first_in_response.km_measures[0].display == "km 5.301 (Rda-Eem)"
 
 
 @pytest.mark.parametrize(
