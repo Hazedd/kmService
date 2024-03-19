@@ -102,7 +102,7 @@ class KmLintMeasure:
         """
         Computes the kilometer value string.
         """
-        return km_string_helper(self.distance, self.hm, self.km_lint.name)
+        return km_string_helper(self.hm, self.distance, self.km_lint.name)
 
     def get_geojson_features(
         self, add_raai: bool = True, add_geocode: bool = True
