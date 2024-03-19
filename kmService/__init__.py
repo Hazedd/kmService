@@ -8,7 +8,7 @@ from .km_responses import (
 )
 from .km_service import KmService, KmServiceBuilder, get_km_service
 
-__version__ = "0.0.1a3"
+__version__ = "0.0.1a4"
 
 __all__ = [
     "KmService",
