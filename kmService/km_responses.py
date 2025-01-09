@@ -2,6 +2,7 @@ import json
 import math
 from dataclasses import dataclass, field
 
+import numpy as np
 from shapely import LineString, Point
 
 from kmService.km_models import KmValueObject
@@ -54,9 +55,12 @@ class KmLintResponse:
         name: The kilometer lint name.
         description: The description of the kilometer lint.
     """
-
+    puic: str = ""
     name: str = ""
     description: str = ""
+    km_from: float = ""
+    km_to: float = np.nan
+    hm_Values: list[float] = field(default_factory=list)
 
 
 @dataclass
@@ -86,9 +90,14 @@ class KmLintMeasure:
     ) -> "KmLintMeasure":
         self = cls()
         self.input_point = input_point
+
         self.km_lint = KmLintResponse(
-            km_value_object.km_vlak.km_lint_naam,
-            km_value_object.km_vlak.km_lint_omschrijving,
+            km_value_object.km_lint.puic,
+            km_value_object.km_lint.km_lint_name,
+            km_value_object.km_lint.km_lint_description,
+            km_value_object.km_lint.km_from,
+            km_value_object.km_lint.km_to,
+            km_value_object.km_lint.hm_values,
         )
         self.geocode = GeoCodeResponse(
             int(km_value_object.sub_geocode.geo_code),
