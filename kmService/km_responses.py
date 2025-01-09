@@ -12,6 +12,7 @@ from kmService.uitils.shapely_geojson import (
     dumps,
 )
 from kmService.uitils.shapely_helpers import ShapelyTransform
+from kmService.wkt_helpers import remove_z_from_wkt, wkt_to_gml_coordinates
 
 
 @dataclass
@@ -62,6 +63,7 @@ class KmLintResponse:
     km_from: float = np.nan
     km_to: float = np.nan
     hm_Values: list[float] = field(default_factory=list)
+    raai_wkt: str = ""
 
 
 @dataclass
@@ -99,6 +101,7 @@ class KmLintMeasure:
             km_value_object.km_lint.km_from,
             km_value_object.km_lint.km_to,
             km_value_object.km_lint.hm_values,
+            km_value_object.km_lint.geometry.wkt,
         )
         self.geocode = GeoCodeResponse(
             int(km_value_object.sub_geocode.geo_code),
@@ -288,7 +291,7 @@ class KmResponse:
             dumps(self.get_geojson_feature_collection(add_raai, add_geocode), indent=4)
         )
 
-    def as_json_serializable(self):
+    def as_json_serializable(self) -> dict:
         """Converts KmResponse instance to a JSON serializable dictionary."""
         return {
             "input_point_wkt": self.input_point.wkt,
@@ -297,6 +300,44 @@ class KmResponse:
                 measure.as_json_serializable() for measure in self.km_measures
             ],
         }
+
+    def imx_kilometer_ribbons(self) -> str:
+        """
+        Generate XML string representation of kilometer ribbons, supports multiple results on newline.
+
+        Returns:
+            XML string describing the kilometer ribbons.
+        """
+        return "\n".join(
+            [
+                f"""<KilometerRibbon puic="{item.km_lint.puic}" name="{item.km_lint.name}" kmFrom="{item.km_lint.km_from}" kmTo="{item.km_lint.km_to}" description="{item.km_lint.description}">
+        <Metadata originType="Unknown" source="open-imx.nl" lifeCycleStatus="Unknown" isInService="Unknown"/>
+        <Location>
+            <GeographicLocation dataAcquisitionMethod="Unknown">
+                <gml:LineString srsName="EPSG:28992">
+                    <gml:coordinates>{ wkt_to_gml_coordinates(remove_z_from_wkt(item.km_lint.raai_wkt))}</gml:coordinates>
+                </gml:LineString>
+            </GeographicLocation>
+        </Location>
+        <Measures>{" ".join(f"{num:.1f}" for num in item.km_lint.hm_Values)}</Measures>
+    </KilometerRibbon>"""
+                for item in self.km_measures
+            ]
+        )
+
+    def imx_ribbon_locations(self) -> str:
+        """
+        Generate XML string for ribbon locations, supports multiple results on newline.
+
+        Returns:
+            XML string describing ribbon locations.
+        """
+        return "\n".join(
+            [
+                f'<KmRibbonLocation kmRibbonRef="{item.km_lint.puic}" value="{int(item.hm *1000 + item.distance)}"/>'
+                for item in self.km_measures
+            ]
+        )
 
 
 @dataclass
