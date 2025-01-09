@@ -315,7 +315,7 @@ class KmResponse:
         <Location>
             <GeographicLocation dataAcquisitionMethod="Unknown">
                 <gml:LineString srsName="EPSG:28992">
-                    <gml:coordinates>{ wkt_to_gml_coordinates(remove_z_from_wkt(item.km_lint.raai_wkt))}</gml:coordinates>
+                    <gml:coordinates>{wkt_to_gml_coordinates(remove_z_from_wkt(item.km_lint.raai_wkt))}</gml:coordinates>
                 </gml:LineString>
             </GeographicLocation>
         </Location>
@@ -334,7 +334,7 @@ class KmResponse:
         """
         return "\n".join(
             [
-                f'<KmRibbonLocation kmRibbonRef="{item.km_lint.puic}" value="{int(item.hm *1000 + item.distance)}"/>'
+                f'<KmRibbonLocation kmRibbonRef="{item.km_lint.puic}" value="{int(item.hm * 1000 + item.distance)}"/>'
                 for item in self.km_measures
             ]
         )
