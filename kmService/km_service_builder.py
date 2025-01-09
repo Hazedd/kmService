@@ -6,7 +6,14 @@ import numpy as np
 from arcGisFeatureCache import ArcGisFeatureService
 from shapely import LineString, MultiLineString, Polygon, STRtree
 
-from kmService.km_models import KmPunt, KmRaai, KmSubGeocode, KmValueObject, KmVlak, KmLint
+from kmService.km_models import (
+    KmLint,
+    KmPunt,
+    KmRaai,
+    KmSubGeocode,
+    KmValueObject,
+    KmVlak,
+)
 from kmService.uitils.log import logger
 from kmService.uitils.shapleyTools import extend_line
 
@@ -87,7 +94,14 @@ class KmServiceBuilder:
                 "data_list": self._sub_geocode,
             },
             "Kilometerlint": {
-                "attributes": ["OBJECTID", "PUIC", "NAAM", "OMSCHRIJVING", "KM_KMLINT_VAN", "KM_KMLINT_TOT"],
+                "attributes": [
+                    "OBJECTID",
+                    "PUIC",
+                    "NAAM",
+                    "OMSCHRIJVING",
+                    "KM_KMLINT_VAN",
+                    "KM_KMLINT_TOT",
+                ],
                 "data_class": KmLint,
                 "data_list": self._km_lint,
             },
@@ -357,4 +371,3 @@ class KmServiceBuilder:
             for item in value.km_raaien:
                 tester = value.geometry.intersection(item.geometry_corrected)
                 item.geometry_corrected = tester
-
