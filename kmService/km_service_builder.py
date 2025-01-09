@@ -312,7 +312,7 @@ class KmServiceBuilder:
                 ]
                 sub_geocode_km_vlakken[key].matched = value
             else:
-                raise ValueError("no split sub geocodes")  # noqa TRY003
+                logger.error(f"⚠️ no sub geocodes vlak for {key}")
 
         self.value_objects = sub_geocode_km_vlakken
 
