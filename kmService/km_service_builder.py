@@ -6,7 +6,14 @@ import numpy as np
 from arcGisFeatureCache import ArcGisFeatureService
 from shapely import LineString, MultiLineString, Polygon, STRtree
 
-from kmService.km_models import KmPunt, KmRaai, KmSubGeocode, KmValueObject, KmVlak
+from kmService.km_models import (
+    KmLint,
+    KmPunt,
+    KmRaai,
+    KmSubGeocode,
+    KmValueObject,
+    KmVlak,
+)
 from kmService.uitils.log import logger
 from kmService.uitils.shapleyTools import extend_line
 
@@ -30,6 +37,7 @@ class KmServiceBuilder:
         self._km_raaien: list[KmRaai] = []
         self._km_punten: list[KmPunt] = []
         self._sub_geocode: list[KmSubGeocode] = []
+        self._km_lint: list[KmLint] = []
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -85,6 +93,18 @@ class KmServiceBuilder:
                 "data_class": KmSubGeocode,
                 "data_list": self._sub_geocode,
             },
+            "Kilometerlint": {
+                "attributes": [
+                    "OBJECTID",
+                    "PUIC",
+                    "NAAM",
+                    "OMSCHRIJVING",
+                    "KM_KMLINT_VAN",
+                    "KM_KMLINT_TOT",
+                ],
+                "data_class": KmLint,
+                "data_list": self._km_lint,
+            },
         }
 
         tasks = []
@@ -137,7 +157,7 @@ class KmServiceBuilder:
             dict: A dictionary containing key-value pairs of identifier and KmValueObject.
         """
 
-        async def builder(sub_geocode: KmSubGeocode, km_vlak: KmVlak):
+        async def builder(sub_geocode: KmSubGeocode, km_vlak: KmVlak, km_linten_dict):
             """
             Builds value objects for sub geocode and km vlakken.
 
@@ -151,20 +171,23 @@ class KmServiceBuilder:
             _ = {}
             if sub_geocode.geometry.intersects(km_vlak.geometry):
                 intersection = sub_geocode.geometry.intersection(km_vlak.geometry)
-                tester = KmValueObject(intersection, km_vlak, sub_geocode)
+                lint = km_linten_dict[km_vlak.km_lint_naam]
+                value_object = KmValueObject(intersection, km_vlak, sub_geocode, lint)
 
                 if isinstance(intersection, Polygon):
-                    logger.success(f"created sub geocode km lint vlak {tester}")
+                    logger.success(f"created sub geocode km lint vlak {value_object}")
                     _[
                         f"{sub_geocode.geo_code}_{sub_geocode.sub_code}_{km_vlak.km_lint_naam}"
-                    ] = tester
+                    ] = value_object
 
                 elif isinstance(intersection, LineString | MultiLineString):
-                    logger.info(f"builder returns no polygon: {tester}")
+                    logger.info(f"builder returns no polygon: {value_object}")
             return _
 
+        km_linten_dict = {item.km_lint_name: item for item in self._km_lint}
+
         tasks = [
-            builder(sub_geocode, km_vlak)
+            builder(sub_geocode, km_vlak, km_linten_dict)
             for sub_geocode in self._sub_geocode
             for km_vlak in self._km_vlakken
         ]
@@ -312,7 +335,7 @@ class KmServiceBuilder:
                 ]
                 sub_geocode_km_vlakken[key].matched = value
             else:
-                raise ValueError("no split sub geocodes")  # noqa TRY003
+                logger.error(f"⚠️ no sub geocodes vlak for {key}")
 
         self.value_objects = sub_geocode_km_vlakken
 

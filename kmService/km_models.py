@@ -6,6 +6,25 @@ from kmService.uitils.shapleyTools import extend_line
 
 
 @dataclass
+class KmLint:
+    object_id: int
+    puic: str
+    km_lint_name: str
+    km_lint_description: str
+    km_from: float
+    km_to: float
+    geometry: LineString
+    measure_points: list[float] = field(init=False)
+
+    def __post_init__(self):
+        self.measure_points = [coord[2] for coord in self.geometry.coords]
+
+    @property
+    def hm_values(self):
+        return list(set([round(item, 1) for item in self.measure_points]))
+
+
+@dataclass
 class KmVlak:
     object_id: int
     km_lint_naam: str
@@ -90,6 +109,7 @@ class KmValueObject:
     geometry: Polygon
     km_vlak: KmVlak
     sub_geocode: KmSubGeocode
+    km_lint: KmLint
     km_punten: list[KmPunt] = field(default_factory=list)
     km_raaien: list[KmRaai] = field(default_factory=list)
     matched: list[KmPunt | KmRaai | None] = field(default_factory=list)

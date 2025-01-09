@@ -16,7 +16,7 @@ feature_service_instance_km = asyncio.run(KmService.factory())
 )
 @pytest.mark.asyncio
 async def test_km_service(feature_service_instance_km: KmService):
-    assert len(feature_service_instance_km._value_objects_dict.keys()) == 669
+    assert len(feature_service_instance_km._value_objects_dict.keys()) == 674
 
 
 @pytest.mark.parametrize(
