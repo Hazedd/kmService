@@ -55,10 +55,11 @@ class KmLintResponse:
         name: The kilometer lint name.
         description: The description of the kilometer lint.
     """
+
     puic: str = ""
     name: str = ""
     description: str = ""
-    km_from: float = ""
+    km_from: float = np.nan
     km_to: float = np.nan
     hm_Values: list[float] = field(default_factory=list)
 
