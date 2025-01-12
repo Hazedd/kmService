@@ -62,7 +62,8 @@ class KmLintResponse:
     description: str = ""
     km_from: float = np.nan
     km_to: float = np.nan
-    hm_Values: list[float] = field(default_factory=list)
+    measure_points: list[float] = field(default_factory=list)
+    hm_values: list[float] = field(default_factory=list)
     raai_wkt: str = ""
 
 
@@ -100,6 +101,7 @@ class KmLintMeasure:
             km_value_object.km_lint.km_lint_description,
             km_value_object.km_lint.km_from,
             km_value_object.km_lint.km_to,
+            km_value_object.km_lint.measure_points,
             km_value_object.km_lint.hm_values,
             km_value_object.km_lint.geometry.wkt,
         )
@@ -311,6 +313,7 @@ class KmResponse:
         return "\n".join(
             [
                 f"""<KilometerRibbon puic="{item.km_lint.puic}" name="{item.km_lint.name}" kmFrom="{item.km_lint.km_from}" kmTo="{item.km_lint.km_to}" description="{item.km_lint.description}">
+        <!--KmRibbon added by kmService open-imx.nl, see docs for the accuracy disclaimer-->
         <Metadata originType="Unknown" source="open-imx.nl" lifeCycleStatus="Unknown" isInService="Unknown"/>
         <Location>
             <GeographicLocation dataAcquisitionMethod="Unknown">
@@ -319,7 +322,7 @@ class KmResponse:
                 </gml:LineString>
             </GeographicLocation>
         </Location>
-        <Measures>{" ".join(f"{num:.1f}" for num in item.km_lint.hm_Values)}</Measures>
+        <Measures>{" ".join(f"{num:.8f}" for num in item.km_lint.measure_points)}</Measures>
     </KilometerRibbon>"""
                 for item in self.km_measures
             ]
@@ -334,6 +337,7 @@ class KmResponse:
         """
         return "\n".join(
             [
+                f"<!--KmValue km {item.display} added by kmService open-imx.nl, see docs for the accuracy disclaimer-->\n"
                 f'<KmRibbonLocation kmRibbonRef="{item.km_lint.puic}" value="{int(item.hm * 1000 + item.distance)}"/>'
                 for item in self.km_measures
             ]

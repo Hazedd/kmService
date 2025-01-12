@@ -21,7 +21,7 @@ class KmLint:
 
     @property
     def hm_values(self):
-        return list(set([round(item, 1) for item in self.measure_points]))
+        return sorted(list(set([round(item, 1) for item in self.measure_points])))
 
 
 @dataclass
