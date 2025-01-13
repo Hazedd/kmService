@@ -8,15 +8,16 @@
 
 ---
 
-**Documentation**: <a href="https://Hazedd.github.io/kmService/" target="_blank">https://Hazedd.github.io/kmService/</a>
+**Documentation**: <a href="https://open-imx.github.io/kmService/" target="_blank">https://open-imx.github.io/kmService/</a>
 
-**Source Code**: <a href="https://github.com/Hazedd/kmService" target="_blank">https://github.com/Hazedd/kmService</a>
+**Source Code**: <a href="https://github.com/open-imx/kmService" target="_blank">https://github.com/open-imx/kmService/</a>
+
+**PyPi**: <a href="https://pypi.org/project/kmService/" target="_blank">https://pypi.org/project/kmService/</a>
 
 ---
 
 The dutch rail infrastructure utilizes kilometer measurements to pinpoint the location of objects along the linear infrastructure.
 This service aims to give you reference information from km and geocodes.
-
 
 ## Location Determination and Accuracy Disclaimer
 
@@ -25,6 +26,24 @@ Therefore, users are advised to use the provided location information cautiously
 We cannot guarantee the absolute accuracy or completeness of the data and hereby disclaim any warranties, express or implied, regarding its reliability or fitness for a particular purpose.
 
 By utilizing this application and its location-based features, users acknowledge and accept the inherent limitations and uncertainties associated with location determination.</strong>
+
+## Open-IMX Initiative
+This open source project is part of the **Open-IMX initiative**. This initiative aims to provide a collaborative environment for developers, data analysts and railway professionals to effectively work with IMX data.
+
+### 🗪 Discord Community Channel 🤝
+
+💥 We invite you to join the [👉 open-imx community on Discord](https://discord.gg/wBses7bPFg).
+
+### Features
+- ✅ get actual km data from arcgis feature service
+- ✅ correct hm raai to hm points
+- ✅ get geocode info by xy
+- ✅ get km measure and ribbon by xy
+- ✅ km measure and ribbon as imx string (IMXv1-v12)
+
+### Backlog and Issues
+- backlog/roadmap and progress see https://github.com/orgs/open-imx/projects/6
+- issues see https://github.com/open-imx/kmService/issues
 
 
 ## Install
@@ -36,14 +55,19 @@ pip install kmService
 ## Usage
 
 ```py
-import asyncio
-from kmService import KmService, get_km_service
 
-if async:
+async def async_example():
+    from kmService import KmService
+
     km_service_instance = await KmService.factory()
+    return km_service_instance
 
-else:
-    km_service_instance = get_km_service(url)
+def sync_example():
+    from kmService import get_km_service
+
+    # we use the get_km_service methode, and use async in the background 🎉
+    km_service_instance = get_km_service()
+    return km_service_instance
 
 response = km_service_instance.get_km(x, y)
 print(response.display)
