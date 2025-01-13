@@ -1,8 +1,8 @@
 site_name: kmService
 site_description:
 
-repo_url: https://github.com/Hazedd/kmService
-repo_name: Hazedd/kmService
+repo_url: https://github.com/open-imx/kmService
+repo_name: open-imx/kmService
 
 theme:
     name: material
@@ -68,7 +68,7 @@ nav:
         - kmService: reference/kmService.md
         - kmResponse: reference/kmResponse.md
         - kmProjectionResponse: reference/kmProjection.md
-        #- kmServiceBuilder: reference/kmServiceBuilder.md
+        - kmServiceBuilder: reference/kmServiceBuilder.md
     - Contributing: contribution.md
     - Code of conduct: code_of_conduct.md
     - License: license.md
