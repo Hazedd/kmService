@@ -4,16 +4,18 @@
 We primary use **RVT method**, all geometry are handled with shapely.
 
 ### Data source
-- The kilometer service relies on GIS data supplied by ProRail, accessible through [Referentiesysteem_004](https://mapservices.prorail.nl/arcgis/rest/services/Referentiesysteem_004/FeatureServer) the following feature layers are used:
+- The kilometer service relies on GIS data supplied by ProRail, accessible through [Referentiesysteem on maps.prorail.nl](https://maps.prorail.nl/arcgis/rest/services/Referentiesysteem/FeatureServer) the following feature layers are used:
+    - Kilometerlint
     - Kilometerlintvlak
     - Hectometerpunt (geocode)
     - Geocodesubgebied
+    - Raai
 
 ### Data processing
 - It scrapes all features layers from the feature service in memory.
 - We do some post processing on the raai feature:
-    - extended the line and will be trimmed on polygons of the km vlak. This ensures that a raai stretch belong to the corresponding area.
-    - Some raaien do not align perfectly with the hectometer points. We adjust the raai so that it aligns with the hectometer point. This ensures consistency across the data sources.
+    - extended the raai line and will be trimmed on polygons of the km vlak. This ensures that a raai stretch belong to the corresponding area.
+    - Most raaien do not align perfectly with the hectometer points. We adjust the raai so that it aligns with the hectometer point. This ensures consistency across the data sources.
 - On some locations a hm point does not have a raai, we need to add the raai manualy. (this is still a todo/ future feature)
 
 ## Geocodes and kilometer lint

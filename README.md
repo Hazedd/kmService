@@ -30,7 +30,7 @@ By utilizing this application and its location-based features, users acknowledge
 ## Open-IMX Initiative
 This open source project is part of the **Open-IMX initiative**. This initiative aims to provide a collaborative environment for developers, data analysts and railway professionals to effectively work with IMX data.
 
-### 🗪 Discord Community Channel 🤝
+### 🗪 Discord Community Channel
 
 💥 We invite you to join the [👉 open-imx community on Discord](https://discord.gg/wBses7bPFg).
 
@@ -42,8 +42,8 @@ This open source project is part of the **Open-IMX initiative**. This initiative
 - ✅ km measure and ribbon as imx string (IMXv1-v12)
 
 ### Backlog and Issues
-- backlog/roadmap and progress see https://github.com/orgs/open-imx/projects/6
-- issues see https://github.com/open-imx/kmService/issues
+- backlog/roadmap and progress see [https://github.com/orgs/open-imx/projects/6](https://github.com/orgs/open-imx/projects/6)
+- issues see [https://github.com/open-imx/kmService/issues](https://github.com/open-imx/kmService/issues)
 
 
 ## Install
