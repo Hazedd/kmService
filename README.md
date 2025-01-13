@@ -12,15 +12,6 @@
 
 **Source Code**: <a href="https://github.com/Hazedd/kmService" target="_blank">https://github.com/Hazedd/kmService</a>
 
-## Project will be moved to the Open-IMX Initiative
-
-Open IMX is dedicated to enhancing the accessibility and usability of IMX data.
-This initiative aims to provide a collaborative environment for developers, data analysts and railway professionals to effectively work with IMX data.
-
-### 🗪 Discord Community Channel 🤝
-
-💥 We invite you to join the [👉 open-imx community on Discord](https://discord.gg/wBses7bPFg).
-
 ---
 
 The dutch rail infrastructure utilizes kilometer measurements to pinpoint the location of objects along the linear infrastructure.
